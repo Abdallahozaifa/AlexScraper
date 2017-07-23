@@ -10,14 +10,15 @@
      var http = require('http');
      var agent = new http.Agent;
      agent.maxSockets = 10;
-     var $;
 
      // Polyfill for Object.assign and String.endsWith
      var objectAssign = require('object-assign');
      require('string.prototype.endswith');
      var pub = {};
+     var priv = {};
      var errorArr = [];
 
+     /* Removes by value */
      Array.prototype.remove = function() {
          var what, a = arguments,
              L = a.length,
@@ -31,6 +32,7 @@
          return this;
      };
 
+     /* object that contains all possible errors */
      var generalError = {
          generateInvalidUrl: function(error) {
              errorArr.push(errorArr);
@@ -38,8 +40,8 @@
          }
      };
 
-     pub.getName = function(input, callback) {
-         request('http://ims2.saaed.ae/ims/generatReportForSaaed?ACC_ID=21761604071829', function(err, res, body) {
+     priv.processRequest = function(ACC_ID, callback) {
+         request('http://ims2.saaed.ae/ims/generatReportForSaaed?ACC_ID=' + ACC_ID, function(err, res, body) {
              // Server does not exist
              if (res == undefined) {
                  generalError.generateInvalidUrl(err);
@@ -50,45 +52,69 @@
              }
              // Server returns html
              else {
-                 $ = cheerio.load(body, {
+                 const $ = cheerio.load(body, {
                      ignoreWhitespace: true
                  });
-
-                 var personsArr = [];
-
-                 function Person(name, role, gender, DOB) {
-                     this.name = name;
-                     this.role = role;
-                     this.gender = gender;
-                     this.DOB = DOB;
-                 }
-
-                 $("#DataList1_ctl00_OWNER_NAMELabel").each(function() {
-                     var ownerName = $(this).text();
-                     personsArr.push(new Person(ownerName, "OWNER", "NULL", "NULL"));
-                 });
-
-                 var driverNames = [];
-                 $("#DataList1_ctl00_DRIVER_NAMELabel").each(function() {
-                     var driverName = $(this).text();
-                     driverNames.push(driverName);
-                 });
-
-                 var driverCount = 0;
-                 personsArr.forEach(function(person) {
-                     driverNames.forEach(function(driverName) {
-                         if (person.name == driverName) {
-                             person.role = "DRIVER, OWNER";
-                             driverNames.remove(person.name);
-                         }
-                         driverCount++;
-                     });
-                 });
-                 driverNames.forEach(function(driverName) {
-                     personsArr.push(new Person(driverName, "DRIVER", "NULL", "NULL"));
-                 });
-                  callback(personsArr);
+                 callback($);
              }
+         });
+     };
+
+     /**
+      * Fills the student info object.
+      * @function
+      * @param {string} ACC_ID - The accident id of a RTC incident.
+      * @param function callback - The callback that returns a person array
+      */
+     pub.getName = function(ACC_ID, callback) {
+
+         /* function that processes the request */
+         priv.processRequest(ACC_ID, function($) {
+             var personsArr = [];
+             /**
+              * Creates a new person object
+              * @function
+              * @param {string} ACC_ID - The accident id of a RTC incident.
+              * @param function callback - The callback that returns a person array
+              */
+             function Person(name, role, gender, DOB) {
+                 this.name = name;
+                 this.role = role;
+                 this.gender = gender;
+                 this.DOB = DOB;
+             }
+
+             /* Creates a new person object with a driver attribute and adds it to the person array */
+             $("#DataList1_ctl00_OWNER_NAMELabel").each(function() {
+                 var ownerName = $(this).text();
+                 personsArr.push(new Person(ownerName, "OWNER", "NULL", "NULL"));
+             });
+
+             var driverNames = [];
+             /* Adds each driver to a separate drivers array */
+             $("#DataList1_ctl00_DRIVER_NAMELabel").each(function() {
+                 var driverName = $(this).text();
+                 driverNames.push(driverName);
+             });
+
+             var driverCount = 0;
+             /* Finds each person who is a owner and adds them as a driver if applicable */
+             personsArr.forEach(function(person) {
+                 driverNames.forEach(function(driverName) {
+                     if (person.name == driverName) {
+                         person.role = "DRIVER, OWNER";
+                         driverNames.remove(person.name);
+                     }
+                     driverCount++;
+                 });
+             });
+
+             /* Creates a new person object with a driver attribute */
+             driverNames.forEach(function(driverName) {
+                 personsArr.push(new Person(driverName, "DRIVER", "NULL", "NULL"));
+             });
+
+             callback(personsArr);
          });
      };
 
