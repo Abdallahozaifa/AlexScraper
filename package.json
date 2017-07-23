@@ -1,0 +1,49 @@
+{
+  "name": "psd-api",
+  "version": "0.0.3",
+  "description": "A Penn State Directory extractor that pretends to be an API",
+  "main": "src/psd-api.js",
+  "scripts": {
+    "test": "mocha ./test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abdallahozaifa/Penn-State-Directory-API.git"
+  },
+  "keywords": [
+    "penn state directory",
+    "penn state",
+    "student",
+    "api",
+    "scraper",
+    "scrape"
+  ],
+  "author": [
+    "Hozaifa Abdalla <Abdallahozaifa19527@gmail.com> (http://hozaifaabdalla.com/)",
+    "Kenneth Schnall <kas6570@psu.edu> (https://kensch.com/)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Abdallahozaifa/Penn-State-Directory-API/issues"
+  },
+  "homepage": "https://github.com/Abdallahozaifa/Penn-State-Directory-API#readme",
+  "dependencies": {
+    "async": "^2.3.0",
+    "cheerio": "^0.20.0",
+    "object-assign": "^4.0.1",
+    "querystring": "^0.2.0",
+    "request": "^2.69.0",
+    "string.prototype.endswith": "^0.2.0"
+  },
+  "devDependencies": {
+    "chai": "~3.5.0",
+    "chai-http": "^2.0.1",
+    "ghooks": "^1.1.1",
+    "mocha": "^2.4.5"
+  },
+  "config": {
+    "ghooks": {
+      "pre-commit": "npm run test"
+    }
+  }
+}
