@@ -18,6 +18,19 @@
      var pub = {};
      var errorArr = [];
 
+     Array.prototype.remove = function() {
+         var what, a = arguments,
+             L = a.length,
+             ax;
+         while (L && this.length) {
+             what = a[--L];
+             while ((ax = this.indexOf(what)) !== -1) {
+                 this.splice(ax, 1);
+             }
+         }
+         return this;
+     };
+
      var generalError = {
          generateInvalidUrl: function(error) {
              errorArr.push(errorArr);
@@ -55,28 +68,26 @@
                      personsArr.push(new Person(ownerName, "OWNER", "NULL", "NULL"));
                  });
 
-                var driverNames = [];
+                 var driverNames = [];
                  $("#DataList1_ctl00_DRIVER_NAMELabel").each(function() {
                      var driverName = $(this).text();
                      driverNames.push(driverName);
                  });
-                 
+
                  var driverCount = 0;
-                 personsArr.forEach(function(person){
-                     driverNames.forEach(function(driverName){
-                         if(person.name == driverName){
+                 personsArr.forEach(function(person) {
+                     driverNames.forEach(function(driverName) {
+                         if (person.name == driverName) {
                              person.role = "DRIVER, OWNER";
-                             driverNames.splice(1, driverCount);
+                             driverNames.remove(person.name);
                          }
                          driverCount++;
                      });
                  });
-                 
-                 driverNames.forEach(function(driverName){
+                 driverNames.forEach(function(driverName) {
                      personsArr.push(new Person(driverName, "DRIVER", "NULL", "NULL"));
                  });
-
-                 console.log(personsArr);
+                  callback(personsArr);
              }
          });
      };
