@@ -67,10 +67,9 @@
       * @param function callback - The callback that returns a person array
       */
      pub.getName = function(ACC_ID, callback) {
-
+         var personsArr = [];
          /* function that processes the request */
          priv.processRequest(ACC_ID, function($) {
-             var personsArr = [];
              /**
               * Creates a new person object
               * @function
@@ -118,12 +117,36 @@
          });
      };
 
-     pub.getMedicalReport = function(input, callback) {
-         console.log("GET INFO!");
+     pub.getMedicalReport = function(ACC_ID, callback) {
+         var report;
+         priv.processRequest(ACC_ID, function($) {
+             /**
+              * Creates a new person object
+              * @function
+              * @param {string} ACC_ID - The accident id of a RTC incident.
+              * @param function callback - The callback that returns a person array
+              */
+             function report() {
+                // report attributes
+             }
+             callback(report)
+         });
      };
 
-     pub.getEmirate = function(input, callback) {
-         console.log("GET INFO!");
+     pub.getEmirate = function(ACC_ID, callback) {
+         var emirate;
+         priv.processRequest(ACC_ID, function($) {
+             /**
+              * Creates a new person object
+              * @function
+              * @param {string} ACC_ID - The accident id of a RTC incident.
+              * @param function callback - The callback that returns a person array
+              */
+             function emirate() {
+                // report attributes
+             }
+             callback(emirate)
+         });
      };
 
      /* EXPORTS the psd-api in node */
